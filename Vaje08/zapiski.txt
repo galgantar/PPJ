@@ -1,0 +1,1 @@
+; je operator ki zavrze prvega in vrne drugega

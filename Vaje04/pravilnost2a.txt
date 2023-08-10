@@ -1,0 +1,54 @@
+NALOGA1:
+
+PRAVILO: [P[x->e]] x := e [P], predpogoj, program, kaj pol velja... da neki dokazemo rabmo v predpogoju dobit x zamenjan z e pa da se vedno vse velja
+
+gremo od spodi navzgor, iz vrha dol sploh ne vemo, kaksno invarianto hocemo
+za if stavek se morta obe veji koncat na koncnem pogoju - lahko koncni pogoj kr dopisemo
+    na spodnjo stran obeh
+
+invarianta P je c == x^3
+
+[y > 0]
+
+x:=0
+c:=0
+[x = 0, c = 0]
+[c == x^3 velja]
+while c < y do
+    [y - x = z (z neka konstanta) in y - x >= 0 and c < y in c = x^3] ... POPOLNA PRAVILNOST
+    [x+1>=0 (sledi iz tega da je x>=0) and y-(x+1)>=0 and y-(x+1)<z] ... POPOLNA PRAVILNOST (ko se x poveca za 1 se z strogo zmanjsa)
+    [mi rabmo dokazat x-y>=0, to dokazemo tko, da recemo x<=x^3=c<y!!!, zato smo rabl se predpostavt x>=0 in povsod prej to dokazat]
+    [] ... eksplicitno napisemo prazen predpogoj
+    x := x + 1
+    [] ... eksplicitno prazen predpogoj
+    c := x * x * x
+    [c == x^3 velja]
+    [y - x >= 0 and y - x < z more se strogo zmanjsat] ... POPOLNA PRAVILNOST
+
+done
+
+[velja c >= y (smo izstopli) and P]
+
+if c > y
+    [c > y and P] ... P je zancna invarianta
+    [ 0 = thirdroot(0) ] ... to vedno velja
+    x := 0
+    [ x = thirdroot(0) ]
+    y := 0
+    [ x = thirdroot(y) ]
+else
+    [ x = thirdroot(y) and c <= y (smo v else) and P and c >= y (smo izstopil iz zanke)] ... ker vemo da smo v elsu, P je zancna invarianta
+    [ce izberemo P je c = x^3 in c == y]
+    [lahko sklepamo da x = thirdroot(y) - nismo zgubil predznaka]
+    [ x = thirdroot(y) ] ... po pravilu za skip kr prepisemo
+    skip
+    [ x = thirdroot(y) ]
+end
+
+[ x = thirdroot(y) ]
+
+POPOLNA PRAVILNOST: iscemo aritmeticni izraz, katerega vrednost se vsako iteracijo zmanjsa
+    in ki ga znamo omejit (npr. y - c je lahko poljubno negativna), izberemo y - x,
+    ker kub raste hitrej kot pristevanje 1 (to je <=0, lahko je 0 ce sta oba 1)
+
+Rabmo dokazat, da se spremenljivka z zmanjsa vsako iteracijo in da ostane pozitivna

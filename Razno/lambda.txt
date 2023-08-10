@@ -1,0 +1,27 @@
+dvakratnik scot churchillevega stevila
+
+0 := \x f . x
+1 := \x f . f 0 x
+2 := \x f . f 1 (f 0 x)
+3 := \x f . f 2 (f 1 (f 0 x))
+
+f ... sprejme dva parametra
+
+
+ena definirana brez da bi uporabili 0:
+1 := ^ x f . f (^ x f. x) x (samo namest 0 smo v oklepaju vstavili definicijo)
+
+naslednjik
+nasl := ^n . ^ x f. f n ( n x f) samo definicijo 3 z 2 sem za splosno uporabil
+
+pristej dva:
+plusDva := ^ n . nasl (nasl n)
+
+PODVOJITEV - apliciramo plusDva tokrat, kokr mamo stevilo n sprejme dva parametra
+3 := \x f . f 2 (f 1 (f 0 x)) -- namest f 2 dobimo plusDva 2 v vsakem gnezdenju!!!
+
+double := ^ n . n 0 (^ a b . pristejDva b) -- n sprejme dva argumenta, prvi argument (a) ignoriramo
+
+PREDHODNIK:
+stevilo n uporabis kot funkcijo, za x podam 0 da bo predhodnik 0 enak 0
+pred := ^ n . n 0 (^ a b . a)

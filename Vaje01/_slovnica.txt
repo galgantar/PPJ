@@ -1,0 +1,10 @@
+⟨izraz⟩ ::= ⟨aditivni⟩ EOF
+⟨aditivni⟩ ::= ⟨multiplikativni⟩ | ⟨aditivni⟩ + ⟨multiplikativni⟩ | ⟨aditivni⟩ - ⟨multiplikativni⟩
+⟨multiplikativni⟩ ::= ⟨nasprotni⟩ | ⟨multiplikativni⟩ * ⟨nasprotni⟩
+⟨nasprotni⟩ ::= - ⟨nasprotni⟩ | ⟨potencni⟩
+⟨potencni⟩ ::= ⟨aplikativni⟩ | ⟨aplikativni⟩ ^ ⟨potencni⟩ // rekurzija je na desni - je desno asociatoven
+⟨aplikativni⟩ ::= ⟨osnovni⟩ | ⟨ime_funkcije⟩ ⟨osnovni⟩
+⟨osnovni⟩ ::= ( ⟨aditivni⟩ ) | ⟨spremenljivka⟩ | ⟨konstanta⟩
+⟨spremenljivka⟩ ::= [a-zA-Z]+
+⟨ime_funkcije⟩ ::= [a-zA-Z]+
+⟨konstanta⟩ ::= ⟨float⟩

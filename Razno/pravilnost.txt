@@ -1,0 +1,28 @@
+k = 1
+
+while k * k < n do
+    [d = n-(k-1)^2, n-(k-1)^2>0]
+    
+    [d > n-(k + 1 - 1)^2, n-(k + 1 - 1)^2>0] ... iz odspodi navzgor k zamenjam z k+1
+
+    k = k + 1
+
+
+
+    [] ... da bo (k-1)^2 < k^2 more veljat k > 0 ... fuknemo se vse to v invarianto
+
+    [d > n-(k-1)^2, n-(k-1)^2>0] ... kolicina se zmanjsa, se vedno je vecja od nula
+done
+
+[ (k - 1)^2 < n <= k^2 ]
+
+
+INVARIANTA: (k - 1)^2 < n (od odspodi gremo, vemo, da jo bomo rabil)
+
+VREDNOST, KI SE ZMANJSUJE: n - (k - 1)^2 , vemo, da bo vedno vecje od 0, se zmanjsuje vsako iteracijo
+
+NAPIS VSE OCITNE PIZDARIJE V OGLATE OKLEPAJE!! npr. [k = 1]
+
+PIS KOMENTARJE NPR ZAKAJ (k^2 > (k - 1)^2)
+
+VSAK KORAK MORE IZ NASLEDNJEGA SLEDIT Z DIREKTNO IMPLIKACIJO

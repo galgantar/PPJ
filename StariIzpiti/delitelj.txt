@@ -1,0 +1,27 @@
+{x > 0, y > 0}
+** a = x
+** b = y
+
+{a = x, b = y}
+
+
+{ D(a, b) = D(x, y) } # INVARIANTA
+** while not (a = b) do
+**     if a > b then
+            { a > b}
+            { a - b + b > b }
+            { D(a, b) = D(x, y) }
+            { D(a - b, b) = D(x, y) }
+**         a = a - b
+            { a + b > b}
+            {a > 0}
+            { D(a, b) = D(x, y) }
+**     else
+**         b = b - a
+            {b > 0}
+**     end
+        { D(a, b) = D(x, y) }
+** end
+{ a = b } in { D(a, b) = D(x, y) }
+
+{a = D(x, y)}

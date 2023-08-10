@@ -1,0 +1,11 @@
+Nardil bomo mnozico elementov, ki jih lahko med sabo urejamo
+
+moduli - delcki kode, ki so poimenovani
+
+keyword sig - kere spremenljivke in funkcije morjo bit implementirane - signature v Ocamlu je interface v Javi
+
+funktorji - sprejmejo module in vrnejo module == TEMPLATI/GENERIKI
+
+val - isto kot let, samo uporablja se pri specifikaciji modula
+
+do stvari v modulu dostopas tko kt v pythonu SL.empty...

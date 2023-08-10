@@ -1,0 +1,30 @@
+[ a < b ]
+
+** x := a ;
+** y := b ;
+{ x = a, y = b, a < b }
+
+{ x <= (a + b + 1)/2,  y >= (a + b)/2, x + y = a + b }   INVARIANTA
+** while x < y do
+    {x < y}
+    { x <= (a + b + 1)/2,  y >= (a + b)/2, x + y = a + b  }
+    { x + 1 - 1 <= (a + b)/2,  y + 1 - 1>= (a + b + 1)/2, x + 1 - 1 + y - 1 + 1 = a + b  }
+
+** x := x + 1 ;
+** y := y - 1
+
+    { x - 1 <= (a + b)/2,  y + 1 >= (a + b + 1)/2, x + y = a + b  }
+    { x <= (a + b + 1)/2, y + 1 >= (a + b + 1)/2, x + y = a + b }   INVARIANTA VELJA
+    {x < y + 2}
+    
+** done
+    { x >= y, x < y + 2 }
+    { x <= (a + b + 1)/2,  y >= (a + b)/2, x + y = a + b }
+
+{ a + b ≤ 2x ≤ a + b + 1 }
+
+
+[ a + b ≤ 2x ≤ a + b + 1 ]
+
+
+POPOLNA PRAVILNOST: kolicina y - x se zmanjsuje, je omejena s -1

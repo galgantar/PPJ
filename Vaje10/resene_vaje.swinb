@@ -1,0 +1,363 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+## Sortiranje
+
+Seznam z `n` elementi lahko enostavno sortiramo z O(n²) primerjavami, ali z nekaj truda z O(n⋅log(n)). Da pa se tudi precej slabše: tu bomo implementirali deterministični [bogosort](https://en.wikipedia.org/wiki/Bogosort), ki seznam sortira v času O(n⋅n!).
+</div>
+
+<div class="nb-cell markdown" name="md2">
+### `is_sorted/1`
+
+Definirajte predikat `is_sorted(L)`, ki velja, če so elementi seznama `L` urejeni po nepadajočem vrstnem redu. Predpostavite lahko, da seznam vsebuje samo števila; primerjamo jih lahko z operatorjem `&gt;=`.
+
+    ?- is_sorted([2,3,6,6,12]).
+    true.
+    ?- is_sorted([2,3,1,6,5]).
+    false.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p1">
+% implementiraj predikat is_sorted/1
+% is_sorted([]). ne rabimo tega
+is_sorted([_]).
+is_sorted([H1, H2 | T]) :-
+    H1 =&lt; H2,
+    is_sorted([H2 | T]).
+</div>
+
+<div class="nb-cell query" name="q1">
+is_sorted([2,3,6,6,12]).
+</div>
+
+<div class="nb-cell query" name="q2">
+is_sorted([2,3,1,6,5]).
+</div>
+
+<div class="nb-cell markdown" name="md3">
+### `permute/2`
+
+Definirajte predikat `permute(A, B)`, ki velja, če je seznam `B` permutacija elementov iz seznama `A`.
+
+    ?- permute([1,2,3], L).
+    L = [1,2,3] ;
+    L = [1,3,2] ;
+    L = [2,1,3] ;
+    L = [2,3,1] ;
+    L = [3,1,2] ;
+    L = [3,2,1].
+
+*Namig:* pomagate si lahko s predikatom `insert/3` od prejšnjič.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p4">
+% vstavi X v seznam L na poljubno mesto
+% na prvo mesto ali pa skipnemo prvega in rekurzivno
+insert(X, L, [X|L]).
+insert(X, [H|L1], [H|L2]) :- insert(X, L1, L2).
+</div>
+
+<div class="nb-cell program" data-background="true" name="p3">
+% implementiraj predikat permute/2
+permute([], []).
+permute([H|T], B) :-
+    permute(T, PT),
+   	insert(H, PT, B).
+</div>
+
+<div class="nb-cell query" name="q4">
+permute([1,2,3], L).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+### `bogosort/2`
+
+Definirajte predikat `bogosort(A, B)`, ki velja, če seznam `B` vsebuje elemente iz `A` v nepadajočem vrstnem redu:
+
+    ?- bogosort([2,4,3,1,4], L).
+    L = [1,2,3,4,4].
+
+Predikat naj izvede O(n⋅n!) primerjav.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p2">
+% implementiraj predikat bogosort/2
+bogosort(A, B) :- permute(A, B), is_sorted(B).
+</div>
+
+<div class="nb-cell query" name="q3">
+bogosort([2,4,3,1,4], L).
+</div>
+
+<div class="nb-cell markdown" name="md5">
+## Turingov stroj
+
+V čistem prologu bomo implementirali Turingov stroj. Spomnimo se, da Turingov stroj namesto RAMa uporablja neskončni *trak* celic, v katerih hrani simbole izbrane abecede (pogosto sta to `0` in `1`). *Glava* bere in piše iz trenutne celice ter se lahko pomika za eno mesto levo ali desno. V vsakem trenutku je stroj v enem od končno mnogo *stanj*.
+
+Program za Turingov stroj sestoji iz nabora ukazov. Na podlagi programa stroj na vsakem koraku glede na trenutni simbol in stanje na trak zapiše nov simbol, premakne glavo v levo ali desno (ali jo pusti na mestu) in se postavi v novo stanje (ki je lahko enako prejšnjemu). Program bomo zapisali z naborom pravil, ki ga podamo s predikatom `program/6`:
+
+    program(Name, InState, InSymbol, OutState, OutSymbol, Direction)
+
+Argument `Name` pove ime programa in povezuje vsa pravila za določen program. `InState` in `InSymbol` sta stanje stroja in simbol v celici pod glavo, pri katerih uporabimo to pravilo. `OutState` pove stanje, v katerem bo stroj po tem ukazu. `OutSymbol` je nov simbol, ki naj se zapiše v trenutno celico, `Direction` pa smer, v katero naj se premakne glava.
+</div>
+
+<div class="nb-cell markdown" name="md6">
+Program, ki številu v eniškem zapisu prišteje ena:
+
+    program(plus1, q0, 1, q0, 1, right).
+    program(plus1, q0, b, final, 1, stay).
+    
+    ?- turing(plus1, [1,1,1], Out).
+    Out = [1,1,1,1].
+</div>
+
+<div class="nb-cell program" data-background="true" name="p5">
+program(plus1, q0, 1, q0, 1, right).
+program(plus1, q0, b, final, 1, stay).
+</div>
+
+<div class="nb-cell markdown" name="md7">
+Program, ki skopira zaporedje enic:
+
+    program(copy, q0, b, final, b, stay).
+    program(copy, q0, 1, 2, b, right).
+    program(copy, 2, b, 3, b, right).
+    program(copy, 2, 1, 2, 1, right).
+    program(copy, 3, b, 4, 1, left).
+    program(copy, 3, 1, 3, 1, right).
+    program(copy, 4, b, 5, b, left).
+    program(copy, 4, 1, 4, 1, left).
+    program(copy, 5, b, q0, 1, right).
+    program(copy, 5, 1, 5, 1, left).
+    
+    ?- turing(copy, [1,1,1], Out).
+    Out = [1,1,1,b,1,1,1].
+</div>
+
+<div class="nb-cell program" data-background="true" name="p6">
+program(copy, q0, b, final, b, stay).
+program(copy, q0, 1, 2, b, right).
+program(copy, 2, b, 3, b, right).
+program(copy, 2, 1, 2, 1, right).
+program(copy, 3, b, 4, 1, left).
+program(copy, 3, 1, 3, 1, right).
+program(copy, 4, b, 5, b, left).
+program(copy, 4, 1, 4, 1, left).
+program(copy, 5, b, q0, 1, right).
+program(copy, 5, 1, 5, 1, left).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+Program, ki izračuna (doda na konec) liho pariteto:
+
+    program(parity, q0, 0, q0,      0, right).
+    program(parity, q0, 1, q1,      1, right).
+    program(parity, q0, b, final,   0, stay).
+    program(parity, q1, 0, q1,      0, right).
+    program(parity, q1, 1, q0,      1, right).
+    program(parity, q1, b, final,   1, stay).
+    
+    ?- turing(parity, [1,1,0,1,0,0,1], Out).
+    Out = [1, 1, 0, 1, 0, 0, 1, 0] .
+</div>
+
+<div class="nb-cell program" data-background="true" name="p7">
+program(parity, q0, 0, q0,      0, right).
+program(parity, q0, 1, q1,      1, right).
+program(parity, q0, b, final,   0, stay).
+program(parity, q1, 0, q1,      0, right).
+program(parity, q1, 1, q0,      1, right).
+program(parity, q1, b, final,   1, stay).
+</div>
+
+<div class="nb-cell markdown" name="md14">
+Za končno stanje bomo uporabili atom `final`, začetno stanje pa bomo označili s `q0`.
+</div>
+
+<div class="nb-cell markdown" name="md9">
+### `action/3`
+
+»Neskončni« trak predstavimo z dvema seznamoma. Seznam `L` vsebuje simbole na traku levo od glave, seznam `R` pa simbole desno od glave (vključno s simbolom, ki je trenutno pod glavo). Poleg tega bomo zaradi lažjega dostopanja seznam `L` hranili v obratnem vrstnem redu. Če je trenutna vsebina traku npr. 
+
+    c d e f g h
+    ===========
+          ^
+          |
+          `---------- glava
+
+jo torej predstavimo s seznamoma
+
+    L = [e,d,c]
+    R = [f,g,h]
+
+Prazno celico predstavimo s simbolom `b`. Celoten trak bomo predstavili s strukturo oblike `L-R`. Tukaj operator `-` ne pomeni odštevanja, temveč le povezuje seznama `L` in `R` v eno strukturo. Zgorjni trak tako opisuje struktura
+
+    [e,d,c]-[f,g,h]
+
+Definirajte predikat `action(Direction, InL-InR, OutL-OutR)`, ki glavo premakne v dano smer (`Direction` je lahko `left`, `right` ali `stay`). Primer:
+
+    % glava ostane na mestu
+    ?- action(stay, [e,d,c]-[f,g,h], OutL-OutR).
+    OutL = [e,d,c],
+    OutR = [f,g,h].
+    
+    % glava se pomakne v desno: prvi element iz desnega seznama premaknemo levo
+    ?- action(right, []-[c,d], OutL-OutR).
+    OutL = [c],
+    OutR = [d].
+    
+    % če je seznam v dani smeri prazen, moramo dodati nov b
+    ?- action(left, []-[c,d], OutL-OutR).
+    OutL = [],
+    OutR = [b,c,d].
+</div>
+
+<div class="nb-cell program" data-background="true" name="p8">
+% implementiraj predikat action/3
+action(stay, T, T).
+action(right, InL-[H|T], [H|InL]-T).
+action(right, InL-[], [b|InL]-[]). % levi seznam je obrnjen
+action(left, [H|T]-InR, T-[H|InR]).
+action(left,[]-InR, []-[b|InR]).
+</div>
+
+<div class="nb-cell query" name="q5">
+action(stay, [e,d,c]-[f,g,h], OutL-OutR).
+</div>
+
+<div class="nb-cell query" name="q6">
+action(right, []-[c,d], OutL-OutR).
+</div>
+
+<div class="nb-cell query" name="q7">
+action(left, []-[c,d], OutL-OutR).
+</div>
+
+<div class="nb-cell markdown" name="md10">
+### `head_rest/3`
+
+Trenutni simbol pod glavo lahko s traku `L-R` dobimo tako, da vzamemo prvi element seznama `R`. Lahko pa se zgodi, da je `R` prazen. Definirajte pomožni predikat `head_rest(R, Head, Rest)`, ki iz trenutnega seznama na desni `R` dobi element `Head` pod glavo in preostanek seznama `Rest`. Primer:
+
+    % če seznam na desni ni prazen, vrnemo prvi element in preostanek
+    ?- head_rest([0,1,1], Head, Rest).
+    Head = 0,
+    Rest = [1,1].
+    
+    % če je seznam na desni prazen, vrnemo prazen simbol `b` in prazen seznam
+    ?- head_rest([], Head, Rest).
+    Head = b,
+    Rest = [].
+</div>
+
+<div class="nb-cell program" data-background="true" name="p9">
+% implementiraj predikat head_rest/3
+head_rest([], b, []).
+head_rest([H|T], H, T).
+</div>
+
+<div class="nb-cell query" name="q8">
+head_rest([0,1,1], Head, Rest).
+</div>
+
+<div class="nb-cell query" name="q9">
+head_rest([], Head, Rest).
+</div>
+
+<div class="nb-cell markdown" name="md11">
+### `step/5`
+
+Definirajte predikat `step(Name, InL-InR, InState, OutL-OutR, OutState)`, ki izvede en korak na Turingovem stroju s programom `Name` pri vsebini traku `InL-InR` in stanju `InState`. Primer:
+
+    ?- step(plus1, []-[1,b,b], q0, OutL-OutR, OutState).
+    OutL = [1],
+    OutR = [b,b],
+    OutState = q0.
+    
+    ?- step(plus1, [1]-[b,b], q0, OutL-OutR, OutState).
+    OutL = [1],
+    OutR = [1,b],
+    OutState = final.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p10">
+% implementiraj predikat step/5
+step(Name, InL-InR, State, OutL-OutR, OutState) :- 
+    head_rest(InR, Head, Rest),
+    % program(Name, InState, InSymbol, OutState, OutSymbol, Direction)
+    program(Name, State, Head, OutState, OutSymbol, Direction),
+    
+    % action(Direction, InL-InR, OutL-OutR)
+    action(Direction, InL-[OutSymbol|Rest], OutL-OutR).
+</div>
+
+<div class="nb-cell query" name="q10">
+step(plus1, []-[1,b,b], q0, OutL-OutR, OutState).
+</div>
+
+<div class="nb-cell query" name="q11">
+step(plus1, [1]-[b,b], q0, OutL-OutR, OutState).
+</div>
+
+<div class="nb-cell markdown" name="md12">
+### `run/4`
+
+Definirajte predikat `run(Name, State, InL-InR, OutL-OutR)`, ki požene program `Name` iz začetnega stanja `State` in vhodnega traku `InL-InR` do konca:
+
+- če je v stanju `final`, se ustavi;
+- sicer izvede en korak in znova pokliče `run/4`.
+</div>
+
+<div class="nb-cell markdown" name="md15">
+Primer:
+
+    ?- run(plus1, q0, []-[1,1,1], OutTape).
+    OutTape = [1,1,1]-[1].
+</div>
+
+<div class="nb-cell program" data-background="true" name="p11">
+% implementiraj predikat run/4
+% run(Name, State, InL-InR, OutL-OutR)
+run(_, final, T, T).
+run(Name, State, InL-InR, OutL-OutR) :-
+    % step(Name, InL-InR, InState, OutL-OutR, OutState)
+    step(Name, InL-InR, State, OutL1-OutR1, OutState),
+    run(Name, OutState, OutL1-OutR1, OutL-OutR).
+</div>
+
+<div class="nb-cell query" name="q12">
+run(plus1, q0, []-[1,1,1], OutTape).
+</div>
+
+<div class="nb-cell markdown" name="md13">
+### `turing/3`
+
+Definirajte predikat `turing(Name, InTape, OutTape)`, ki izvede program `Name` na vhodnem traku `[]-InTape`. Argument `InTape` je torej le seznam simbolov desno od glave. Tudi `OutTape` naj je navaden seznam vseh simbolov na traku v pravem vrstnem redu. Iz strukture `L-R` ga dobimo tako, da `L` obrnemo in ga staknemo z `R`.
+
+Primer:
+
+    ?- turing(plus1, [1,1,1], OutTape).
+    OutTape = [1,1,1,1].
+</div>
+
+<div class="nb-cell markdown" name="md16">
+
+</div>
+
+<div class="nb-cell program" data-background="true" name="p12">
+% implementiraj predikat turing/3
+% turing(Name, InTape, OutTape)
+turing(Name, InTape, OutTape) :-
+    run(Name, q0, []-InTape, OutL-OutR),
+    reverse(OutL, RevOutL),
+    append(RevOutL, OutR, OutTape).
+</div>
+
+<div class="nb-cell html" name="htm1">
+
+</div>
+
+<div class="nb-cell query" name="q13">
+turing(plus1, [1,1,1], OutTape).
+</div>
+
+</div>

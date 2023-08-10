@@ -1,0 +1,8 @@
+BNF tist format grammatike na spletni
+
+Lexer - string spremeni v zetone
+Parser - zetone spremeni v drevo AST (abstract sintax tree)
+
+Operacijska semantika - pove, kako naj naracunamo drevo (ali najprej leva veja ali najprej desna...)
+
+REPL - read, eval, print, loop (bash lupina, python interpreter je primer repla)

@@ -1,0 +1,37 @@
+NALOGA2:
+
+{x >= 0}
+
+y := 0 ... groba spodnja pa zgornja meja za koren iz x je 0 in x
+z := x
+
+{x in z pozitivna, y^2 <= x <= z^2 }
+while 1 < z - y do
+
+    {1 < z - y and y^2 <= x <= z^2, x in z pozitivna}
+    s := (z + y) / 2
+    {1 < z - y and y^2 <= x <= z^2, x in z pozitivna in s = (z + y)/2} ... vela na zacetku obeh vej
+
+    {s bo gotovo ostal pozitiven povsod}
+    if s * s < x then
+        {s * s < x}
+        {1 < z - y and y^2 <= x <= z^2, x in z pozitivna in s = (z + y)/2} ... vela na zacetku obeh vej
+        y := s
+        {ker s^2 manjsi od x bo tut <=}
+        {x in z pozitivna, y^2 <= x <= z^2 } ... v obeh vejah more veljat invarianta
+
+    else
+        {s * s >= x}
+        {1 < z - y and y^2 <= x <= z^2, x in z pozitivna in s = (z + y)/2} ... vela na zacetku obeh vej
+
+        z := s
+        {ker s^2 >= x sledi z^2 >= x , prvi del trojne neenakosti se pa ni spremenu}
+        {x in z pozitivna, y^2 <= x <= z^2 } ... v obeh vejah more veljat invarianta
+
+    end
+    {I - mora veljat invarianta I}
+done
+{1 >= z - y oz y + 1 >= z and y^2 <= x <= z^2 (nasa zancna invarianta), rabimo se z>=0 in y>=0, se to dodamo v invarianto} ... invarianto smo nasli, zdej mormo pokazat, da v zanki drzi
+
+
+{ y^2 <= x <= (y + 1)^2 }

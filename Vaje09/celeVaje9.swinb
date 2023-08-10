@@ -1,0 +1,440 @@
+<div class="notebook">
+
+<div class="nb-cell program" data-background="true" name="p1">
+parent(tina, william).
+parent(thomas, william).
+parent(thomas, sally).
+parent(thomas, jeffrey).
+parent(sally, andrew).
+parent(sally, melanie).
+parent(andrew, joanne).
+parent(jill, joanne).
+parent(joanne, steve).
+parent(william, vanessa).
+parent(william, patricia).
+parent(vanessa, susan).
+parent(patrick, susan).
+parent(patricia, john).
+parent(john, michael).
+parent(john, michelle).
+
+parent(frank, george).
+parent(estelle, george).
+parent(morty, jerry).
+parent(helen, jerry).
+parent(jerry, anna).
+parent(elaine, anna).
+parent(elaine, kramer).
+parent(george, kramer).
+
+parent(margaret, nevia).
+parent(margaret, alessandro).
+parent(ana, aleksander).
+parent(aleksandr, aleksander).
+parent(nevia, luana).
+parent(aleksander, luana).
+parent(nevia, daniela).
+parent(aleksander, daniela).
+
+male(william).
+male(thomas).
+male(jeffrey).
+male(andrew).
+male(steve).
+male(patrick).
+male(john).
+male(michael).
+male(frank).
+male(george).
+male(morty).
+male(jerry).
+male(kramer).
+male(aleksandr).
+male(alessandro).
+male(aleksander).
+
+female(tina).
+female(sally).
+female(melanie).
+female(joanne).
+female(jill).
+female(vanessa).
+female(patricia).
+female(susan).
+female(michelle).
+female(estelle).
+female(helen).
+female(elaine).
+female(anna).
+female(margaret).
+female(ana).
+female(nevia).
+female(luana).
+female(daniela).
+</div>
+
+<div class="nb-cell markdown" name="md1">
+## Družinske relacije
+
+V tem sklopu nalog bomo definirali predikate za nekaj družinskih relacij, kot so »sestra«, »teta« in »prednik«. Za preizkušanje rešitev bomo uporabljali družinsko drevo (pravzaprav gozd), ki ga najdete na učilnici.
+
+Družinske relacije v prologu opišemo s predikati `parent/2`, `male/1` in `female/1`. Zapis `parent/2` pomeni, da gre za predikat z imenom `parent` z dvema argumentoma. Primer:
+
+```Prolog
+    parent(tina, william).
+    parent(thomas, william).
+    parent(thomas, sally).
+    …
+    female(tina).
+    female(sally).
+    female(vanessa).
+    …
+    male(william).
+    male(thomas).
+    male(jeffrey).
+    …
+```
+
+Dejstvo `parent(tina, william)` pomeni, da je `tina` starš od `william`a. Imena pišemo z malimi črkami, ker bi jih prolog sicer obravnaval kot spremenljivke.
+
+Nato lahko pišemo različne poizvedbe, npr.:
+
+```Prolog
+    ?- parent(thomas, sally).
+    true.
+    ?- parent(thomas, X).
+    X = william ;
+    X = sally .
+```
+
+S podpičjem (`;`) oziroma `n` zahtevamo naslednjo rešitev, s piko (`.`) pa poizvedbo prekinemo. Če se poizvedba ne ustavi, jo prekinemo s `ctrl-c` in nato `a` (za *abort*).
+</div>
+
+<div class="nb-cell query" name="q1">
+parent(thomas, sally).
+</div>
+
+<div class="nb-cell query" name="q2">
+parent(thomas, X).
+</div>
+
+<div class="nb-cell markdown" name="md12">
+### `mother/2`
+
+Definirajte predikat `mother(X, Y)`, ki velja, ko je `X` mama od `Y`.
+
+```Prolog
+    ?- mother(tina, william).
+    true.
+    ?- mother(nevia, Y).
+    Y = luana ;
+    Y = daniela.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p2">
+% implementiraj predikat mother/2
+mother(A, B) :- parent(A, B), female(A).
+</div>
+
+<div class="nb-cell query" name="q3">
+mother(tina, william).
+</div>
+
+<div class="nb-cell query" name="q4">
+mother(nevia, Y).
+</div>
+
+<div class="nb-cell markdown" name="md11">
+### `grandparent/2`
+
+Definirajte predikat `grandparent(X, Y)`, ki velja, ko je `X` stari starš od `Y`.
+
+```Prolog
+    ?- grandparent(tina, vanessa).
+    true.
+    ?- grandparent(tina, Y).
+    Y = vanessa ;
+    Y = patricia.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p3">
+% implementiraj predikat grandparent/2
+grandparent(A, B) :- parent(A, T), parent(T, B).
+</div>
+
+<div class="nb-cell query" name="q5">
+grandparent(tina, vanessa).
+</div>
+
+<div class="nb-cell query" name="q6">
+grandparent(tina, Y).
+</div>
+
+<div class="nb-cell markdown" name="md10">
+### `sister/2`
+
+Definirajte predikat `sister(X, Y)`, ki velja, ko je `X` sestra od `Y`.
+
+```Prolog
+    ?- sister(vanessa, Y).
+    Y = patricia.
+```
+
+*Namig:* s predikatom `dif/2` povemo prologu, da sta (oz. naj bosta) dve vrednosti različni. Na primer:
+
+```Prolog
+    ?- dif(X, 2), X = 3.
+    X = 3.
+    ?- dif(X, 2), X = 2.
+    false.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p4">
+% implementiraj predikat sister/2
+sister(A, B) :- female(A), parent(T, A), parent(T, B), dif(A, B).
+</div>
+
+<div class="nb-cell query" name="q7">
+sister(vanessa, Y).
+</div>
+
+<div class="nb-cell markdown" name="md9">
+### `aunt/2`
+
+Definirajte predikat `aunt(X, Y)`, ki velja, ko je `X` teta od `Y`.
+
+```Prolog
+    ?- aunt(sally, Y).
+    Y = vanessa ;
+    Y = patricia.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p5">
+% implementiraj predikat aunt/2
+aunt(A, B) :- parent(T, B), sister(A, T).
+</div>
+
+<div class="nb-cell query" name="q8">
+aunt(sally, Y).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+### `ancestor/2`
+
+Definirajte predikat `ancestor(X, Y)`, ki velja, ko je `X` prednik (starš / stari starš / …) od `Y`.
+
+```Prolog
+    ?- ancestor(patricia, Y).
+    Y = john ;
+    Y = michael ;
+    Y = michelle.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p6">
+% implementiraj predikat ancestor/2
+ancestor(A, B) :- parent(A, B).
+ancestor(A, B) :- parent(A, X), ancestor(X, B).
+</div>
+
+<div class="nb-cell query" name="q9">
+ancestor(patricia, Y).
+</div>
+
+<div class="nb-cell markdown" name="md7">
+### `descendant/2`
+
+Definirajte predikat `descendant(X, Y)`, ki velja, ko je `X` potomec (otrok / vnuk / …) od `Y`.
+
+```Prolog
+    ?- descendant(patricia, Y).
+    Y = william ;
+    Y = tina ;
+    Y = thomas.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p7">
+% implementiraj predikat descendant/2
+descendant(A, B) :- ancestor(B, A).
+</div>
+
+<div class="nb-cell query" name="q10">
+descendant(patricia, Y).
+</div>
+
+<div class="nb-cell markdown" name="md6">
+## Seznami
+
+Sezname v prologu pišemo z oglatimi oklepaji:
+
+```Prolog
+    ?- L = [1,2,3,4].
+```
+
+in lahko vsebujejo karkoli:
+
+```Prolog
+    ?- L = [1, a, foo(4,5), [a,b,c], 3.14].
+```
+
+Z združevanjem lahko v seznamu dostopamo do glave (prvega elementa) in repa (preostanka seznama):
+
+```Prolog
+    ?- [H|T] = [1,2,3,4].
+    H = 1,
+    T = [2,3,4].
+```
+
+Seveda deluje tudi obratno:
+
+```Prolog
+    ?- H = 1, T = [2,3,4], L = [H|T].
+    L = [1,2,3,4].
+```
+
+Dva poljubna seznama lahko staknemo s predikatom `append/3`:
+
+```Prolog
+    ?- append([1,2], [3,4], L).
+    L = [1,2,3,4].
+```
+
+Seveda deluje tudi obratno ~ poiščemo lahko `A` in `B`, ki se stakneta v dani seznam:
+
+```Prolog
+    ?- append(A, B, [1,2,3]).
+    A = [],
+    B = [1, 2, 3] ;
+    A = [1],
+    B = [2, 3] ;
+    A = [1, 2],
+    B = [3] ;
+    A = [1, 2, 3],
+    B = [].
+```
+</div>
+
+<div class="nb-cell query" name="q11">
+append(A, B, [1,2,3]).
+</div>
+
+<div class="nb-cell markdown" name="md5">
+### `ancestor/3`
+
+Definirajte predikat `ancestor(X, Y, L)`, ki deluje enako kot `ancestor/2`, le da vrne še seznam oseb na poti od `X` do `Y`.
+
+```Prolog
+    ?- ancestor(thomas, vanessa, L).
+    L = [thomas, william, vanessa].
+    ?- ancestor(thomas, _, L).
+    L = [thomas, william] ;
+    L = [thomas, sally] ;
+    L = [thomas, jeffrey] ;
+    L = [thomas, william, vanessa] ;
+    L = [thomas, william, patricia] ;
+    L = [thomas, william, vanessa, susan] ;
+    L = [thomas, william, patricia, john] ;
+```
+
+Kako bi s pomočjo predikata `ancestor/3` definirali predikata `grandparent/2` in `ancestor/2`?
+</div>
+
+<div class="nb-cell program" data-background="true" name="p8">
+% implementiraj predikat ancestor/3
+ancestor(X, Y, L) :- parent(X, Y), L=[X,Y].
+ancestor(X, Y, L) :- parent(T, Y), ancestor(X, T, L2), append(L2, [Y], L).
+</div>
+
+<div class="nb-cell query" name="q12">
+ancestor(thomas, vanessa, L).
+</div>
+
+<div class="nb-cell query" name="q13">
+ancestor(thomas, _, L).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+### `member/2`
+
+Definirajte predikat `member(X, L)`, ki velja, ko je `X` element seznama `L`.
+
+```Prolog
+    ?- member(X, [1,2,3]).
+    X = 1 ;
+    X = 2 ;
+    X = 3.
+    ?- member(1, [3,2,X]).
+    X = 1.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p9">
+% implementiraj predikat member/2
+member(X, L) :- L = [H|_], X = H.
+member(X, L) :- L = [_|T], member(X, T).
+</div>
+
+<div class="nb-cell query" name="q14">
+member(X, [1,2,3]).
+</div>
+
+<div class="nb-cell query" name="q15">
+member(1, [3,2,X]).
+</div>
+
+<div class="nb-cell markdown" name="md3">
+### `insert/3`
+
+Definirajte predikat `insert(X, L1, L2)`, ki velja, ko seznam `L2` dobimo tako, da v `L1` vstavimo `X` na poljubno mesto.
+
+```Prolog
+    ?- insert(1, [2,3], L).
+    L = [1,2,3] ;
+    L = [2,1,3] ;
+    L = [2,3,1].
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p10">
+% implementiraj predikat insert/3
+insert(X, L1, L2) :- L2=[X|L1].
+insert(X, L1, L2) :- 
+    L1=[H1|T1],
+    L2=[H2|T2],
+    H1=H2,
+    insert(X, T1, T2).
+</div>
+
+<div class="nb-cell query" name="q16">
+insert(1, [2,3], L).
+</div>
+
+<div class="nb-cell markdown" name="md2">
+### `reverse/2`
+
+Definirajte predikat `reverse(A, B)`, ki velja, ko vsebuje seznam `B` elemente seznama `A` v obratnem vrstnem redu.
+
+```Prolog
+    ?- reverse([1,2,3], X).
+    X = [3,2,1].
+    ?- reverse([], []).
+    true.
+```
+</div>
+
+<div class="nb-cell program" data-background="true" name="p11">
+% implementiraj predikat reverse/2
+reverse(A, B) :- A = [], B = [].
+reverse(A, B) :- A=[H|T], reverse(T, X), append(X, [H], B).
+</div>
+
+<div class="nb-cell query" name="q17">
+reverse([1,2,3], X).
+</div>
+
+</div>

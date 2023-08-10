@@ -1,0 +1,67 @@
+Hoarova trojica { predpogoj } stavek { kaj_velja_na_konc (koncni pogoj) }
+vsaka hoarova trojica je izjava ... trdim da ce {P} in se izvede C velja {Q}
+
+PRIREDITVE: 
+    npr. x := x + 1 oz. x := e e...izraz
+    1. iz koncnega pogoja v predpogoj je lahko... samo vse instance x 
+        v zacetnem pogoju zamenjas z x + 1, pogledas, ce koncni pogoj drzi
+    2. iz zacetnega na koncno je tezje, moremo v predpogoju namest x napisat (x + 1) - 1
+
+
+NALOGA1:
+    ** { x = m ∧ y = n }
+        { x + y = m + y ∧ y = n } delamo iz zgori navzdol... povsod veljajo implikacije
+    ** x := x + y;
+        { x = m + y ∧ y = n } ... vse x + y smo zamenjali z x
+        { -x = -m - y ∧ -y = -n} ... mnozili obe z -1
+        { m = x - y ∧ x - y = x - n } ... preuredili obe
+    ** y := x - y;
+        { y = m ∧ y = x - n } ... x - y smo zamenjali z y
+        { y = m ∧ n = x - y } ... -y obe strani
+    ** x := x - y
+        { y = m ∧ x = n } ... x - y smo zamenjali z y
+    ** { x = n ∧ y = m }
+
+    m, n sta v tem primeru duhova - nc ne vemo o njunih vrednostih, more pa program
+        za vse vrednosti delat
+
+NALOGA2:
+    ** { } ... prezen predpogoj, nc ne vemo
+    ** if y < x then
+        { y < x } ... loh predpostavim, ker smo not prsli v zanko
+    ** z := x;
+        { y < x ∧ z = x }
+        { y < z } ... naredim tko, da nimam x-a
+    ** x := y;
+        { x = y ∧ y < z }
+        { x < z }
+    ** y := z
+        { x < z } ... iz tega sledi da je tut <=
+        { x <= y } ... vnaprej mal predictamo kaj hocmo
+    ** else
+        { y >= x } ... smo ze dokazali koncni pogoj
+    ** skip
+    ** end
+    ** { x ≤ y }
+
+NALOGA3:
+    pri zankah je treba uganit invarianto, probamo cim sirse, da lahko velik sklepamo vn,
+        veljat more na zacetku, vsako iteracijo (ponavadi na koncu iteracije), na koncu
+        V tem primeru je nasa invarianta: s = 1+...+(i-1)
+    
+    [ n ≥ 0 ]
+        s := 0;
+        i := 0;
+        { n >= 0 ∧ s = 0 ∧ i = 0 }
+        { s = 1+...+(i-1) }... invarianta na zacetku velja
+        while (i <= n) do 
+            { i <= n }
+            s := s + i;
+            { s = 1+...+(i-1)+i ∧ i <= n}
+            { s = 1+...+(i+1)-1 ∧ (i+1)<= n + 1}
+            i := i + 1;
+            { s = 1+...+(i-1) ∧ i<= n + 1}... zamenjamo i+1 z i => invarianta velja
+        end
+        { i > n ∧ s = 1+...+(i-1) ∧ i <= n + 1} ... tle ves da velja invarianta in ves da velja negacija pogoja v while
+        { i = n + 1 ∧ s = 1+...+(i-1) }
+    [ s = 1 + 2 + ... + n ]... oglati oklepaji, popolna pravilnost, program se ustavi

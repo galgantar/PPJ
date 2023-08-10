@@ -1,0 +1,25 @@
+V programiranju z omejitvami majo +, - ... prave pomene, niso samo neki splosni operatorji
+
+p1(0).
+p2(X+1) :- p1(X). velja za 0 in za X + 1 ... DOBILI BOMO 1, 1+1, 1+1+1.... KER PLUS TRETIRA KOT GENERICEN PLUS
+
+mores se vmes rect S is X ali S #= X da forcamo to, da se zracuna
+
+X #= 2*X + 1... zna resit enacbo
+
+[X, Y] ins 0..sup,    omejimo X in Y
+label([X, Y]).        forsira, da poisce celostevilske resitve
+
+
+IZPELJAVA TIPOV
+
+** fun x -> fun y -> x, y, y
+
+izraz je treba razclenit, puscice so desno asociativne!!
+grske crke pises za tipe
+
+E: fun x -> (fun y -> (x, y, y))                funkcija slika x v neki
+
+E: alfa -> beta in vemo x: alfa, E1: beta           x ma tip alfa, E1 ma tip beta
+
+E1: gama -> delta vemo y: gamma in (x, y, y): delta         dobimo se enacbo beta = gamma -> delta

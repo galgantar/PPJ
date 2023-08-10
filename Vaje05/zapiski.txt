@@ -1,0 +1,17 @@
+1 := ^ f x . f 0 x ; -- prva funkcija pozre vse ostale razen ce so oklepaji
+f x1 x2 ==> f(x1)(x2) -- zagrabi vse ostale
+
+
+Scott-Churchova števila so v resnic razvita rekurzija, ki ji podamo not funkcijo, ki ga ona aplicira nad predhodnikom
+    parameter x pa je tisto, kar se vrne na zakljucku rekurzije
+
+
+PRIMITIVNA REKURZIJA: funkcija je primitivno rekurzivna (faktoriela, mnozenje, sestevanje...) ce lahko najdemo
+    tak f, da bo znotraj tiste oblike g-ja ki je na ucilnici funkcija g delala pravilno
+
+g := λ n . n f x (v primeru faktiriele je x=1 ker je 1!=1)
+
+pred = λ n . n (λ m r . m) 0 - vedno vrne prvi element (kjer je v teh numeralih shranjen predhodnik)
+
+-- 5 := ^ f x . f 4 (4 f x); -- neeksplicitna def 5
+

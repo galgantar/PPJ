@@ -1,0 +1,9 @@
+Laufas file:
+
+ocaml
+#use "imefajla.ml"
+
+BOLJSE:
+
+utop
+#use "imefajla.ml"

@@ -1,0 +1,200 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+# Programiranje z omejitvami
+
+## Uvod
+
+Da lahko programiramo z omejitvami, moramo v prolog naložiti ustrezno knjižnico. Na začetek našega programa zapišemo direktivo
+
+    :- use_module(library(clpfd)).
+
+za delo s [končnimi domenami](http://www.swi-prolog.org/pldoc/man?section=clpfd) (celimi števili) oziroma
+
+    :- use_module(library(clpr)).
+
+za delo z [realnimi števili](http://www.swi-prolog.org/pldoc/man?section=clpqr).
+
+Na vajah bomo uporabljali omejitve na celih številih. Knjižnica CLP(FD) podpira aritmetične operacije in operatorje za primerjavo:
+
+    +   -   *   ^   min   max   mod   rem   abs   //   div
+    #=   #\=   #&gt;=   #=&lt;   #&gt;   #&lt;
+
+Domeno za posamezno spremenljivko določimo tako:
+
+    A in 0..42
+    B in inf..sup
+
+ali za seznam spremenljivk hkrati:
+
+    [A,B,C] ins 1..10
+
+Omejitev `all_distinct([A,B,C])` zagotovi, da imajo spremenljivke `A`, `B` in `C` različne vrednosti. S predikatom `label([A,B,C])` pa naročimo prologu, da s preiskovanjem našteje konkretne vrednosti spremenljivk, ki ustrezajo vsem podanim omejitvam. Preden uporabimo `label`, morajo biti domene vseh spremenljivk omejene.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p2">
+:- use_module(library(clpfd)).
+</div>
+
+<div class="nb-cell query" name="q1">
+A in 0..42.
+</div>
+
+<div class="nb-cell query" name="q2">
+A #&gt; 2, A #=&lt; 4, label([A]).
+</div>
+
+<div class="nb-cell markdown" name="md2">
+### Naloga "klekljarice"
+
+Na rednem tedenskem srečanju se je zbralo `X` klekljaric. Nekatere so s sabo pripeljale tudi svoje mačke; teh je bilo skupaj `Y`. Vemo, da je na srečanju bilo 22 glav in 72 nog. Napiši predikat `meeting(X, Y)`, ki postavi ustrezne omejitve in vrne število klekljaric in mačk, ki so bile na srečanju.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p3">
+% implementiraj predikat meeting/2
+</div>
+
+<div class="nb-cell query" name="q3">
+meeting(X, Y).
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## Problem `n` dam
+
+Napisali bomo program, ki na šahovsko ploščo velikosti `n×n` razporedi `n` dam tako, da se med sabo ne napadajo (torej noben par dam ni na isti horizontali, vertikali ali diagonali). Koordinate posamezne figure bomo zapisali v obliki `X/Y`.
+
+### `safe_pair(X1/Y1, X2/Y2)`
+
+Napišite predikat `safe_pair(X1/Y1, X2/Y2)`, ki z ustreznimi omejitvami zagotovi, da se dami na poljih `X1/Y1` in `X2/Y2` med sabo ne napadata. Primer:
+
+    ?- safe_pair(1/1, 2/2).
+    false.
+    ?- safe_pair(4/2, 5/3).
+    false.
+    ?- safe_pair(3/3, 4/2).
+    false.
+    ?- safe_pair(1/1, 2/3).
+    true.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p4">
+% implementiraj predikat safe_pair/2
+</div>
+
+<div class="nb-cell query" name="q4">
+safe_pair(1/1, 2/2).
+</div>
+
+<div class="nb-cell query" name="q5">
+safe_pair(4/2, 5/3).
+</div>
+
+<div class="nb-cell query" name="q6">
+safe_pair(3/3, 4/2).
+</div>
+
+<div class="nb-cell query" name="q7">
+safe_pair(1/1, 2/3).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+### `safe_list/2`
+
+Napišite predikat `safe_list(X/Y, L)`, ki sprejme koordinate ene dame in seznam koordinat preostalih dam ter preveri, da dama na koordinatah `X/Y` ne napada nobene v seznamu. Primer:
+
+    ?- safe_list(1/1, [3/4, 3/8, 2/3, 3/5]).
+    true.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p5">
+% implementiraj predikat safe_list/2
+</div>
+
+<div class="nb-cell query" name="q8">
+safe_list(1/1, [3/4, 3/8, 2/3, 3/5]).
+</div>
+
+<div class="nb-cell markdown" name="md5">
+### `safe_list/1`
+
+Napišite predikat `safe_list(L)`, ki sprejme seznam koordinat in preveri, da se med sabo ne napada noben par dam v seznamu. Primer:
+
+    ?- safe_list([3/3, 2/5, 1/7, 8/6, 5/4, 7/8]).
+    true.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p6">
+% implementiraj predikat safe_list/1
+</div>
+
+<div class="nb-cell query" name="q9">
+safe_list([3/3, 2/5, 1/7, 8/6, 5/4, 7/8]).
+</div>
+
+<div class="nb-cell markdown" name="md6">
+### `place_queens/3`
+
+Napišite predikat `place_queens(N, I, L)`, ki na šahovnico velikosti ``N × N`` razporedi `N` dam tako, da je vsaka v svojem stolpcu (ima svojo koordinato `X`). Predikat naj vrne koordinate v seznamu `L`. `I` je pomožen parameter, ki hrani trenutno vrednost koordinate `X`. Primer:
+
+    ?- place_queens(2, 0, L), term_variables(L, _Vars), label(_Vars).
+    L = [1/1, 2/1] ;
+    L = [1/1, 2/2] ;
+    L = [1/2, 2/1] ; 
+    L = [1/2, 2/2].
+
+
+Predikat `term_variables(L, _Vars)` poišče vse spremenljivke v izrazu (seznamu) `L` in jih shrani v seznam `_Vars`, na katerem lahko potem pokličemo `label/1`. Predikat `place_queens/2` poskusite napisati tako, da se ustavi, ko vrne vse rešitve.
+</div>
+
+<div class="nb-cell program" data-background="true" name="p7">
+% implementiraj predikat place_queens/3
+</div>
+
+<div class="nb-cell query" name="q10">
+place_queens(2, 0, L), term_variables(L, _Vars), label(_Vars).
+</div>
+
+<div class="nb-cell markdown" name="md7">
+### `queens/2`
+
+Napišite predikat `queens(N, L)`, ki na šahovnico velikosti `N×N` razporedi `N` dam tako, da se med sabo ne napadajo. Njihove koordinate naj vrne v seznamu `L`. Kakšen je najmanjši `N &gt; 1`, za katerega obstaja vsaj ena rešitev?
+</div>
+
+<div class="nb-cell program" data-background="true" name="p8">
+% implementiraj predikat queens/2
+</div>
+
+<div class="nb-cell query" name="q11">
+queens(4, L).
+</div>
+
+<div class="nb-cell query" name="q13">
+% Kakšen je najmanjši N &gt; 1, za katerega obstaja vsaj ena rešitev?
+between(2, infinite, N), queens(N, _), !.
+</div>
+
+<div class="nb-cell query" name="q14">
+between(0, infinite, N), findall(L, queens(N, L), Ls).
+</div>
+
+<div class="nb-cell query" name="q15">
+% https://oeis.org/A000170
+between(0, infinite, _N), findall(L, queens(_N, L), _Ls), length(_Ls, _A), S = (_N, _A).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+Za lepši izpis pozicij kraljic:
+</div>
+
+<div class="nb-cell program" name="p1">
+:- use_rendering(chess).
+queens2(N, L2) :-
+    queens(N, L),
+	maplist(arg(2), L, L2).
+</div>
+
+<div class="nb-cell query" name="q12">
+queens2(4, L).
+</div>
+
+</div>

@@ -1,0 +1,7 @@
+fajl importas z [imeFajla.pl].
+
+parent/2 - koliko stvari sprejme predikat
+
+negacij v prologu ni!
+
+Ne pises REZ = neki ampak mas kot parameter se eno spr, v katero zapises rezultat
